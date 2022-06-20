@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ELibrary.Migrations
 {
     [DbContext(typeof(ELibraryDbContext))]
-    [Migration("20220613031533_full")]
+    [Migration("20220619103850_full")]
     partial class full
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

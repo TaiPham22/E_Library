@@ -27,9 +27,9 @@ namespace ELibrary.Controllers
         [Route("/BaiGiang")]
         public async Task<ActionResult> GetBaiGiang()
         {
-            var result = (from a in _context.TaiLieu
+             var  result =  ( from a in _context.TaiLieu
                           join b in _context.MonHoc on a.MonHocId equals b.Id
-                          where a.LoaiTaiLieu == "Bài giảng"
+                          where a.LoaiTaiLieu.Contains("Bài giảng")
                           select new
                           {
                               Ten = a.TenTaiLieu,
@@ -38,7 +38,7 @@ namespace ELibrary.Controllers
                               KichThuoc = a.KichThuoc
 
                           }).ToList();
-            return Ok(result);
+             return  Ok(result);
         }
         //
         [HttpGet]
@@ -47,7 +47,7 @@ namespace ELibrary.Controllers
         {
             var result = (from a in _context.TaiLieu
                           join b in _context.MonHoc on a.MonHocId equals b.Id
-                          where a.LoaiTaiLieu == "Bài giảng" && b.Id == mh
+                          where a.LoaiTaiLieu.Contains("Bài giảng") && b.Id == mh
                           select new
                           {
                               Ten = a.TenTaiLieu,
@@ -68,7 +68,7 @@ namespace ELibrary.Controllers
             var taiLieu = await _context.TaiLieu.Where(m => m.TieuDe.ToLower().Contains(tukhoa)).ToListAsync();
             var result = (from a in taiLieu
                           join b in _context.MonHoc on a.MonHocId equals b.Id
-                          where a.LoaiTaiLieu == "Bài giảng"
+                          where a.LoaiTaiLieu.Contains("Bài giảng")
                           select new
                           {
                               Ten = a.TenTaiLieu,
@@ -87,7 +87,7 @@ namespace ELibrary.Controllers
         {
             var result = (from a in _context.TaiLieu
                           join b in _context.MonHoc on a.MonHocId equals b.Id
-                          where a.LoaiTaiLieu == "Tài nguyên"
+                          where a.LoaiTaiLieu.Contains("Tài nguyên")
                           select new
                           {
                               Ten = a.TenTaiLieu,
@@ -105,7 +105,7 @@ namespace ELibrary.Controllers
         {
             var result = (from a in _context.TaiLieu
                           join b in _context.MonHoc on a.MonHocId equals b.Id
-                          where a.LoaiTaiLieu == "Tài nguyên" && a.MonHocId == mh
+                          where a.LoaiTaiLieu.Contains("Tài nguyên") && a.MonHocId == mh
                           select new
                           {
                               Ten = a.TenTaiLieu,
@@ -123,7 +123,7 @@ namespace ELibrary.Controllers
         {
             var result = (from a in _context.TaiLieu
                           join b in _context.MonHoc on a.MonHocId equals b.Id
-                          where a.LoaiTaiLieu == "Tài nguyên" && (b.TenMonHoc.Contains(tukhoa) || a.TieuDe.Contains(tukhoa))
+                          where a.LoaiTaiLieu.Contains("Tài nguyên") && (b.TenMonHoc.Contains(tukhoa) || a.TieuDe.Contains(tukhoa))
                           select new
                           {
                               Ten = a.TenTaiLieu,
@@ -155,7 +155,7 @@ namespace ELibrary.Controllers
             try
             {
                 _context.TaiLieu.Add(taiLieu);
-                _context.SaveChangesAsync();
+                 await _context.SaveChangesAsync();
                 return Ok("Them thanh cong");
             }
             catch(DbUpdateException)

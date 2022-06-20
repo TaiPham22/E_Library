@@ -47,7 +47,7 @@ namespace ELibrary.Controllers
         }
         //
         [HttpGet]
-        [Route("TepRiengTu")]
+        [Route("/TepRiengTu")]
         public async Task<ActionResult<IEnumerable<TepRieng>>> XemTep()
         {
             var result = (from a in _context.TepRieng
@@ -82,7 +82,7 @@ namespace ELibrary.Controllers
         }
         //
         [HttpGet]
-        [Route("TimTepRiengTu")]
+        [Route("/TimTepRiengTu")]
         public async Task<ActionResult<TepRieng>> TimTepRt(string tukhoa)
         {
             tukhoa = tukhoa.ToLower();
@@ -129,7 +129,7 @@ namespace ELibrary.Controllers
         // POST: api/TepRiengs
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        [Route("ThemTepRiengTu")]
+        [Route("/ThemTepRiengTu")]
         public async Task<ActionResult<TepRieng>> ThemTep([FromForm] TepRieng tep)
         {
             
@@ -149,7 +149,7 @@ namespace ELibrary.Controllers
 
         // DELETE: api/TepRiengs/5
         [HttpDelete]
-        [Route("XoaTepRiengTu/{id}")]
+        [Route("/XoaTepRiengTu/{id}")]
         public async Task<IActionResult> XoaTep(int id)
         {
             var tep = await _context.TepRieng.FindAsync(id);
