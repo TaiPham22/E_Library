@@ -34,6 +34,7 @@ namespace ELibrary.Controllers
                           {
                               Ten = a.TenTaiLieu,
                               Mon = b.TenMonHoc,
+                              TieuDe=a.TieuDe ,
                               NguoiChinhSua = a.NguoiChinhSuaCuoi,
                               KichThuoc = a.KichThuoc
 
@@ -52,6 +53,7 @@ namespace ELibrary.Controllers
                           {
                               Ten = a.TenTaiLieu,
                               Mon = b.TenMonHoc,
+                              TieuDe=a.TieuDe ,
                               NguoiChinhSua = a.NguoiChinhSuaCuoi,
                               KichThuoc = a.KichThuoc
 
@@ -64,15 +66,16 @@ namespace ELibrary.Controllers
         public async Task<ActionResult> TimKiemBaiGiang(string tukhoa)
         {
             tukhoa = tukhoa.ToLower();
-
-            var taiLieu = await _context.TaiLieu.Where(m => m.TieuDe.ToLower().Contains(tukhoa)).ToListAsync();
-            var result = (from a in taiLieu
+            var result = (from a in _context.TaiLieu
                           join b in _context.MonHoc on a.MonHocId equals b.Id
-                          where a.LoaiTaiLieu.Contains("Bài giảng")
+                          where a.LoaiTaiLieu.Contains("Bài giảng")&&
+                              ( a.TieuDe.ToLower().Contains(tukhoa) ||
+                               a.TenTaiLieu.ToLower().Contains(tukhoa))
                           select new
                           {
                               Ten = a.TenTaiLieu,
                               Mon = b.TenMonHoc,
+                              TieuDe=a.TieuDe ,
                               NguoiChinhSua = a.NguoiChinhSuaCuoi,
                               KichThuoc = a.KichThuoc
                           }).ToList();
@@ -92,6 +95,7 @@ namespace ELibrary.Controllers
                           {
                               Ten = a.TenTaiLieu,
                               Mon = b.TenMonHoc,
+                              TieuDe=a.TieuDe ,
                               NguoiChinhSua = a.NguoiChinhSuaCuoi,
                               KichThuoc = a.KichThuoc
 
@@ -110,6 +114,7 @@ namespace ELibrary.Controllers
                           {
                               Ten = a.TenTaiLieu,
                               Mon = b.TenMonHoc,
+                              TieuDe=a.TieuDe ,
                               NguoiChinhSua = a.NguoiChinhSuaCuoi,
                               KichThuoc = a.KichThuoc
 
@@ -123,11 +128,14 @@ namespace ELibrary.Controllers
         {
             var result = (from a in _context.TaiLieu
                           join b in _context.MonHoc on a.MonHocId equals b.Id
-                          where a.LoaiTaiLieu.Contains("Tài nguyên") && (b.TenMonHoc.Contains(tukhoa) || a.TieuDe.Contains(tukhoa))
+                          where a.LoaiTaiLieu.Contains("Tài nguyên")   &&
+                              (a.TieuDe.ToLower().Contains(tukhoa) ||
+                               a.TenTaiLieu.ToLower().Contains(tukhoa))
                           select new
                           {
                               Ten = a.TenTaiLieu,
                               Mon = b.TenMonHoc,
+                              TieuDe=a.TieuDe ,
                               NguoiChinhSua = a.NguoiChinhSuaCuoi,
                               KichThuoc = a.KichThuoc
                           }).ToList();
@@ -143,7 +151,7 @@ namespace ELibrary.Controllers
         //Them tai nguyen
         [HttpPost]
         [Route("/ThemTaiNguyen")]
-        public async Task<IActionResult> ThemTaiNguyen([FromForm] TaiLieu taiLieu)
+        public async Task<IActionResult> ThemTaiNguyen([FromBody] TaiLieu taiLieu)
         {
             taiLieu.LoaiTaiLieu = "Tài nguyên";
             return await ThemTaiLieu(taiLieu);

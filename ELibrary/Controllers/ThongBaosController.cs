@@ -76,14 +76,13 @@ namespace ELibrary.Controllers
         // POST: api/ThongBaos
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<ThongBao>> ThemThongBao([FromForm] ThongBao thongBao)
+        public async Task<ActionResult<ThongBao>> ThemThongBao([FromBody] ThongBao thongBao)
         {
             thongBao.ThoiGian = DateTime.Now;
-            thongBao.LoaiThongBao = false;
             _context.ThongBao.Add(thongBao);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetThongBao", new { id = thongBao.Id }, thongBao);
+            return Ok("Them thanh cong");
         }
 
         // DELETE: api/ThongBaos/5

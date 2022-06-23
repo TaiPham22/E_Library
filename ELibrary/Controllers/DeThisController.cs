@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -9,7 +8,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ELibrary.Model;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace ELibrary.Controllers
 {
@@ -26,7 +24,7 @@ namespace ELibrary.Controllers
             _webHostEnvironment = webHostEnvironment;
         }
 
-       
+
 
         // GET: api/DeThis/5
         [HttpGet]
@@ -38,13 +36,13 @@ namespace ELibrary.Controllers
             var result = (from a in _context.DeThi
                           join b in _context.TaiKhoan on a.TaiKhoanId equals b.Id
                           join c in _context.MonHoc on a.MonHocId equals c.Id
-                          where a.Id==id
-                          select new { 
-                              MonHoc=c.TenMonHoc,
-                              ThoiLuong=a.ThoiLuong,
-                              TenDeThi=a.TenDeThi,
-                              HinhThuc=a.HinhThuc,
-                              GiaoVienDaoTao=b.UserName
+                          where a.Id == id
+                          select new {
+                              MonHoc = c.TenMonHoc,
+                              ThoiLuong = a.ThoiLuong,
+                              TenDeThi = a.TenDeThi,
+                              HinhThuc = a.HinhThuc,
+                              GiaoVienDaoTao = b.UserName
                           }).ToList();
 
             if (deThi == null)
@@ -61,20 +59,20 @@ namespace ELibrary.Controllers
         public async Task<ActionResult> ChiTietDeThi(int deThi)
         {
             var result = (from a in _context.DeThi
-                      join b in _context.TaiKhoan on a.TaiKhoanId equals b.Id
-                      join c in _context.MonHoc on a.MonHocId equals c.Id
-                      where a.Id==deThi
-                      select new
-                      {
-                          TenDeThi = a.TenDeThi,
-                          MonHoc = c.TenMonHoc,
-                          GiangVien = b.UserName,
-                          HinhThuc = a.HinhThuc,
-                          ThoiLuong = a.ThoiLuong,
-                          NgayTao = a.NgayTao,
-                          TinhTrang = a.TinhTrang==null?"Dang cho phe duyet":(a.TinhTrang==true?"Da phe duyet":"Da huy")
+                          join b in _context.TaiKhoan on a.TaiKhoanId equals b.Id
+                          join c in _context.MonHoc on a.MonHocId equals c.Id
+                          where a.Id == deThi
+                          select new
+                          {
+                              TenDeThi = a.TenDeThi,
+                              MonHoc = c.TenMonHoc,
+                              GiangVien = b.UserName,
+                              HinhThuc = a.HinhThuc,
+                              ThoiLuong = a.ThoiLuong,
+                              NgayTao = a.NgayTao,
+                              TinhTrang = a.TinhTrang == null ? "Dang cho phe duyet" : (a.TinhTrang == true ? "Da phe duyet" : "Da huy")
 
-                      }).ToList();
+                          }).ToList();
             return Ok(result);
         }
         //Duyet
@@ -118,19 +116,19 @@ namespace ELibrary.Controllers
         {
 
             var result = (from a in _context.DeThi
-                      join b in _context.TaiKhoan on a.TaiKhoanId equals b.Id
-                      join c in _context.MonHoc on a.MonHocId equals c.Id
-                      select new
-                      {
-                          LoaiFile=a.Loai,
-                          TenDeThi = a.TenDeThi,
-                          MonHoc = c.TenMonHoc,
-                          GiangVien = b.UserName,
-                          HinhThuc = a.HinhThuc,
-                          ThoiLuong = a.ThoiLuong,
-                          TinhTrang = a.TinhTrang == null ? "Dang cho phe duyet" : (a.TinhTrang == true ? "Da phe duyet" : "Da huy")
+                          join b in _context.TaiKhoan on a.TaiKhoanId equals b.Id
+                          join c in _context.MonHoc on a.MonHocId equals c.Id
+                          select new
+                          {
+                              LoaiFile = a.Loai,
+                              TenDeThi = a.TenDeThi,
+                              MonHoc = c.TenMonHoc,
+                              GiangVien = b.UserName,
+                              HinhThuc = a.HinhThuc,
+                              ThoiLuong = a.ThoiLuong,
+                              TinhTrang = a.TinhTrang == null ? "Dang cho phe duyet" : (a.TinhTrang == true ? "Da phe duyet" : "Da huy")
 
-                      }).ToList();
+                          }).ToList();
 
             return Ok(result);
         }
@@ -141,16 +139,16 @@ namespace ELibrary.Controllers
         {
 
             var result = (from a in _context.DeThi
-                      join b in _context.TaiKhoan on a.TaiKhoanId equals b.Id
-                      select new
-                      {
-                          LoaiFile = a.Loai,
-                          TenDeThi = a.TenDeThi,
-                          ThoiLuong = a.ThoiLuong,
-                          ThoiGianTao = a.NgayTao,
-                          TinhTrang = a.TinhTrang == null ? "Dang cho phe duyet" : (a.TinhTrang == true ? "Da phe duyet" : "Da huy")
+                          join b in _context.TaiKhoan on a.TaiKhoanId equals b.Id
+                          select new
+                          {
+                              LoaiFile = a.Loai,
+                              TenDeThi = a.TenDeThi,
+                              ThoiLuong = a.ThoiLuong,
+                              ThoiGianTao = a.NgayTao,
+                              TinhTrang = a.TinhTrang == null ? "Dang cho phe duyet" : (a.TinhTrang == true ? "Da phe duyet" : "Da huy")
 
-                      }).ToList();
+                          }).ToList();
 
             return Ok(result);
         }
@@ -161,28 +159,28 @@ namespace ELibrary.Controllers
         {
 
             var result = (from a in _context.DeThi
-                      join b in _context.TaiKhoan on a.TaiKhoanId equals b.Id
-                      join c in _context.MonHoc on a.MonHocId equals c.Id
-                      where a.TenDeThi.Contains(tukhoa) || c.TenMonHoc.Contains(tukhoa)
-                      select new
-                      {
-                          LoaiFile = a.Loai,
-                          TenDeThi = a.TenDeThi,
-                          MonHoc = c.TenMonHoc,
-                          GiangVien = b.UserName,
-                          HinhThuc = a.HinhThuc,
-                          ThoiLuong = a.ThoiLuong,
-                          TinhTrang = a.TinhTrang == null ? "Dang cho phe duyet" : (a.TinhTrang == true ? "Da phe duyet" : "Da huy")
+                          join b in _context.TaiKhoan on a.TaiKhoanId equals b.Id
+                          join c in _context.MonHoc on a.MonHocId equals c.Id
+                          where a.TenDeThi.Contains(tukhoa) || c.TenMonHoc.Contains(tukhoa)
+                          select new
+                          {
+                              LoaiFile = a.Loai,
+                              TenDeThi = a.TenDeThi,
+                              MonHoc = c.TenMonHoc,
+                              GiangVien = b.UserName,
+                              HinhThuc = a.HinhThuc,
+                              ThoiLuong = a.ThoiLuong,
+                              TinhTrang = a.TinhTrang == null ? "Dang cho phe duyet" : (a.TinhTrang == true ? "Da phe duyet" : "Da huy")
 
-                      }).ToList();
+                          }).ToList();
 
             return Ok(result);
         }
-        
+
         //
         [HttpGet]
         [Route("/LocDeThi")]
-        public async Task<ActionResult> LocDsDethi(int bomon,int mon)
+        public async Task<ActionResult> LocDsDethi(int bomon, int mon)
         {
             var x = await _context.BoMon.FindAsync(bomon);
 
@@ -200,7 +198,21 @@ namespace ELibrary.Controllers
 
             return Ok(result);
         }
-        
+        [HttpPost]
+        [Route("/Themdethi")]
+        public async Task<ActionResult> ThemDeThi([FromBody] DeThi deThi)
+        { 
+            try {
+                await _context.AddAsync(deThi);
+                await _context.SaveChangesAsync();
+                return Ok("Them thanh cong");
+            }
+            catch(DbUpdateException)
+            {
+                    throw;
+                
+            }
+        }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> SuaDeThi(int id,[FromBody] DeThi deThi)
@@ -216,7 +228,7 @@ namespace ELibrary.Controllers
             {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateException)
             {
                 if (!DeThiExists(id))
                 {
