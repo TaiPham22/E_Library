@@ -6,7 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-using ELibrary.Model;
+using E_Library.Model;
+using E_Library.BUS.IBUS;
 
 namespace ELibrary.Controllers
 {
@@ -14,81 +15,46 @@ namespace ELibrary.Controllers
     [ApiController]
     public class BoMonsController : ControllerBase
     {
-        private readonly ELibraryDbContext _context;
+        private readonly IBoMonBUS _bomonBUS;
 
-        public BoMonsController(ELibraryDbContext context)
+        public BoMonsController(IBoMonBUS bomonBUS)
         {
-            _context = context;
+            _bomonBUS = bomonBUS;
         }
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<BoMon>>> GetBoMon()
+        public ActionResult GetBoMon()
         {
-            return await _context.BoMon.ToListAsync();
+            return Ok(_bomonBUS.GetAll());
         }
 
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<BoMon>> GetBoMon_id(int id)
+        public ActionResult<BoMon> GetBoMon_id(int id)
         {
-            var boMon = await _context.BoMon.FindAsync(id);
-
-            if (boMon == null)
-            {
-                return NotFound();
-            }
-
-            return boMon;
+            return _bomonBUS.Detail(id);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> SuaBoMon(int id,[FromBody] BoMon boMon)
+        [HttpPut]
+        public IActionResult SuaBoMon([FromBody] BoMon boMon)
         {
-            if (id != boMon.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(boMon).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                
-            }
-
-            return NoContent();
+            return Ok(_bomonBUS.Update(boMon));
         }
 
         // POST: api/BoMons
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         [Route("/ThemBoMon")]
-        public async Task<ActionResult<BoMon>> ThemBoMon([FromBody] BoMon boMon)
+        public IActionResult ThemBoMon([FromBody] string boMon)
         {
-
-            _context.BoMon.Add(boMon);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetBoMon", new { id = boMon.Id }, boMon);
+            return Ok(_bomonBUS.Add(boMon));
         }
 
         // DELETE: api/BoMons/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteBoMon(int id)
+        public IActionResult DeleteBoMon(int id)
         {
-            var boMon = await _context.BoMon.FindAsync(id);
-            if (boMon == null)
-            {
-                return NotFound();
-            }
 
-            _context.BoMon.Remove(boMon);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            return Ok(_bomonBUS.Delete(id));
         }
 
      

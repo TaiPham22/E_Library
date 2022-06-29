@@ -6,7 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-using ELibrary.Model;
+using E_Library.Model;
+using E_Library.BUS.IBUS;
 
 namespace ELibrary.Controllers
 {
@@ -14,83 +15,48 @@ namespace ELibrary.Controllers
     [ApiController]
     public class ChuDesController : ControllerBase
     {
-        private readonly ELibraryDbContext _context;
+        private readonly IChuDeBUS _chudeBUS;
 
-        public ChuDesController(ELibraryDbContext context)
+        public ChuDesController(IChuDeBUS chudeBUS)
         {
-            _context = context;
+            _chudeBUS = chudeBUS;
         }
-
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ChuDe>>> ChuDe()
+        public ActionResult GetChuDe()
         {
-            return await _context.ChuDe.ToListAsync();
+            return Ok(_chudeBUS.GetAll());
         }
 
-      
+
         [HttpGet("{id}")]
-        public async Task<ActionResult<ChuDe>> ChiTietChuDe(int id)
+        public ActionResult<ChuDe> GetChuDe_id(int id)
         {
-            var chuDe = await _context.ChuDe.FindAsync(id);
-
-            if (chuDe == null)
-            {
-                return NotFound();
-            }
-
-            return chuDe;
+            return _chudeBUS.Detail(id);
         }
 
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutChuDe(int id, ChuDe chuDe)
+        [HttpPut]
+        public IActionResult SuaChuDe([FromBody] ChuDe chuDe)
         {
-            if (id != chuDe.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(chuDe).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-               
-            }
-
-            return NoContent();
+            return Ok(_chudeBUS.Update(chuDe));
         }
 
         // POST: api/ChuDes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<ChuDe>> ThemChuDe([FromForm] ChuDe chuDe)
+        [Route("/ThemChuDe")]
+        public IActionResult ThemChuDe([FromBody] string chuDe)
         {
-            _context.ChuDe.Add(chuDe);
-            await _context.SaveChangesAsync();
-            
-            return CreatedAtAction("GetChuDe", new { id = chuDe.Id }, chuDe);
+            return Ok(_chudeBUS.Add(chuDe));
         }
 
         // DELETE: api/ChuDes/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> XoaChuDe(int id)
+        public IActionResult DeleteChuDe(int id)
         {
-            var chuDe = await _context.ChuDe.FindAsync(id);
-            if (chuDe == null)
-            {
-                return NotFound();
-            }
 
-            _context.ChuDe.Remove(chuDe);
-            await _context.SaveChangesAsync();
-            
-            return NoContent();
+            return Ok(_chudeBUS.Delete(id));
         }
 
-      
+
     }
 }

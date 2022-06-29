@@ -4,14 +4,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using ELibrary.Model;
+using E_Library.Model;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using ELibrary.Model;
 
 namespace ELibrary.Controllers
 {
@@ -20,7 +19,7 @@ namespace ELibrary.Controllers
         private readonly UserManager<TaiKhoan> userManager;
         private readonly IConfiguration _configuration;
 
-        public DangNhapController(UserManager<TaiKhoan> userManager,  IConfiguration configuration)
+        public DangNhapController(UserManager<TaiKhoan> userManager, IConfiguration configuration)
         {
             this.userManager = userManager;
             _configuration = configuration;
@@ -72,11 +71,11 @@ namespace ELibrary.Controllers
         }
         [HttpPost]
         [Route("/TaoTaiKhoan")]
-        public async Task<IActionResult> TaoTaiKhoan([FromBody] CreateUser model )
+        public async Task<IActionResult> TaoTaiKhoan([FromBody] CreateUser model)
         {
             var userExists = await userManager.FindByNameAsync(model.UserName);
             if (userExists != null)
-                return StatusCode(StatusCodes.Status500InternalServerError,"Da ton tai tai khoan nay" );
+                return StatusCode(StatusCodes.Status500InternalServerError, "Da ton tai tai khoan nay");
 
             TaiKhoan user = new TaiKhoan()
             {
@@ -87,7 +86,7 @@ namespace ELibrary.Controllers
             };
             var result = await userManager.CreateAsync(user, model.PassWord);
             if (!result.Succeeded)
-                return StatusCode(StatusCodes.Status500InternalServerError, "Tao khong thanh cong" );
+                return StatusCode(StatusCodes.Status500InternalServerError, "Tao khong thanh cong");
 
             return Ok("Tao thanh cong");
         }

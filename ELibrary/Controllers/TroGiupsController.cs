@@ -6,7 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-using ELibrary.Model;
+using E_Library.Model;
+using E_Library.BUS.IBUS;
 
 namespace ELibrary.Controllers
 {
@@ -14,72 +15,48 @@ namespace ELibrary.Controllers
     [ApiController]
     public class TroGiupsController : ControllerBase
     {
-        private readonly ELibraryDbContext _context;
+        private readonly ITroGiupBUS _TroGiupBUS;
 
-        public TroGiupsController(ELibraryDbContext context)
+        public TroGiupsController(ITroGiupBUS TroGiupBUS)
         {
-            _context = context;
+            _TroGiupBUS = TroGiupBUS;
         }
-
-        // GET: api/TroGiups
         [HttpGet]
-        [Route("/TroGiup")]
-        public async Task<ActionResult<IEnumerable<TroGiup>>> GetTroGiup()
+        public ActionResult GetTroGiup()
         {
-
-            return await _context.TroGiup.ToListAsync();
+            return Ok(_TroGiupBUS.GetAll());
         }
 
-        // GET: api/TroGiups/5
+
         [HttpGet("{id}")]
-
-        public async Task<ActionResult<TroGiup>> GetTroGiup(int id)
+        public ActionResult<TroGiup> GetTroGiup_id(int id)
         {
-            var result = await _context.TroGiup.FindAsync(id);
-
-            if (result == null)
-            {
-                return NotFound();
-            }
-
-            return result;
+            return _TroGiupBUS.Detail(id);
         }
 
-        
+        [HttpPut]
+        public IActionResult SuaTroGiup([FromBody] TroGiup TroGiup)
+        {
+            return Ok(_TroGiupBUS.Update(TroGiup));
+        }
 
         // POST: api/TroGiups
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        [Route("/TroGiup")]
-        public async Task<ActionResult<TroGiup>> PostTroGiup([FromForm] TroGiup troGiup)
+        [Route("/ThemTroGiup")]
+        public IActionResult ThemTroGiup([FromBody] TroGiup troGiup)
         {
-            troGiup.TaiKhoanId = HttpContext.Session.GetString("Nd");
-            _context.TroGiup.Add(troGiup);
-            
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetTroGiup", new { id = troGiup.Id }, troGiup);
+            return Ok(_TroGiupBUS.Add(troGiup));
         }
 
         // DELETE: api/TroGiups/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTroGiup(int id)
+        public IActionResult DeleteTroGiup(int id)
         {
-            var result = await _context.TroGiup.FindAsync(id);
-            if (result == null)
-            {
-                return NotFound();
-            }
 
-            _context.TroGiup.Remove(result);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            return Ok(_TroGiupBUS.Delete(id));
         }
 
-        private bool TroGiupExists(int id)
-        {
-            return _context.TroGiup.Any(e => e.Id == id);
-        }
+
     }
 }

@@ -2,10 +2,33 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using ELibrary.Model;
+using E_Library.Model;
+using E_Library.BUS.BUS;
+using E_Library.BUS.IBUS;
+using E_Library.Repository.IRepository;
+using E_Library.Repository.Repository;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+
+
+//BoMon
+builder.Services.AddTransient<IBoMon, BoMonRepository>();
+builder.Services.AddTransient<IBoMonBUS, BoMonBUS>();
+//ChuDe
+builder.Services.AddTransient<IChuDe, ChuDeRepository>();
+builder.Services.AddTransient<IChuDeBUS, ChuDeBUS>();
+//TroGiup
+builder.Services.AddTransient<ITroGiup, TroGiupRepository>();
+builder.Services.AddTransient<ITroGiupBUS, TroGiupBUS>();
+//DeThi
+builder.Services.AddTransient<IDeThi, DeThiRepository>();
+builder.Services.AddTransient<IDeThiBUS, DeThiBUS>();
+//TaiKhoan
+
+builder.Services.AddTransient<ITaiKhoan, TaiKhoanRepository>();
+builder.Services.AddTransient<ITaiKhoanBUS, TaiKhoanBUS>();
 
 // Add services to the container.
 builder.Services.AddCors(options =>
@@ -20,9 +43,9 @@ builder.Services.AddCors(options =>
         });
 });
 builder.Services.AddControllers();
-builder.Services.AddDbContext<ELibraryDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("ELibraryDbContext")));
+builder.Services.AddDbContext<E_LibraryDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("ELibraryDbContext")));
 builder.Services.AddIdentity<TaiKhoan, IdentityRole>()
-                .AddEntityFrameworkStores<ELibraryDbContext>()
+                .AddEntityFrameworkStores<E_LibraryDbContext>()
                 .AddDefaultTokenProviders();
 builder.Services.AddAuthentication(options =>
 {
@@ -42,6 +65,8 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]))
     };
 });
+
+
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
@@ -52,6 +77,7 @@ builder.Services.AddSession(options =>
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 
 var app = builder.Build();
 
