@@ -1,133 +1,60 @@
-﻿//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Threading.Tasks;
-//using Microsoft.AspNetCore.Http;
-//using Microsoft.AspNetCore.Mvc;
-//using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
-//using ELibrary.Model;
+using E_Library.Model;
+using E_Library.BUS.IBUS;
 
-//namespace ELibrary.Controllers
-//{
-//    [Route("[controller]/[action]")]
-//    [ApiController]
-//    public class ThuViensController : ControllerBase
-//    {
-//        private readonly ELibraryDbContext _context;
+namespace ELibrary.Controllers
+{
+    [Route("[controller]/[action]")]
+    [ApiController]
+    public class ThuViensController : ControllerBase
+    {
+        private readonly IThuVienBUS _ThuVienBUS;
 
-//        public ThuViensController(ELibraryDbContext context)
-//        {
-//            _context = context;
-//        }
+        public ThuViensController(IThuVienBUS ThuVienBUS)
+        {
+            _ThuVienBUS = ThuVienBUS;
+        }
+        [HttpGet]
+        public ActionResult GetThuVien()
+        {
+            return Ok(_ThuVienBUS.GetAll());
+        }
+        [HttpGet("{id}")]
+        public ActionResult<ThuVien> GetThuVien_id(int id)
+        {
+            return _ThuVienBUS.Detail(id);
+        }
 
-//        // GET: api/ThuViens
-//        [HttpGet]
-//        public async Task<ActionResult<IEnumerable<ThuVien>>> ThuVien()
-//        {
-//            return await _context.ThuVien.ToListAsync();
-//        }
+        [HttpPut]
+        public IActionResult SuaThuVien([FromBody] ThuVien ThuVien)
+        {
+            return Ok(_ThuVienBUS.Update(ThuVien));
+        }
 
-//        // GET: api/ThuViens/5
-   
-//        [HttpGet]
-//        [Route("/HeThongThuVien")]
-//        public async Task<ActionResult<ThuVien>> HeThongThuVien()
-//        {
-//            return await _context.ThuVien.FirstOrDefaultAsync();
-//        }
+        // POST: api/ThuViens
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost]
+        [Route("/ThemThuVien")]
+        public IActionResult ThemThuVien([FromBody] ThuVien ThuVien)
+        {
+            return Ok(_ThuVienBUS.Add(ThuVien));
+        }
 
-//        [HttpPut("{id}")]
-//        public async Task<IActionResult> SuaHeThongThuVien(int id, [FromBody] ThuVien thuVien)
-//        {
-//            if (id != thuVien.Id)
-//            {
-//                return BadRequest();
-//            }
+        // DELETE: api/ThuViens/5
+        [HttpDelete("{id}")]
+        public IActionResult DeleteThuVien(int id)
+        {
 
-//            _context.Entry(thuVien).State = EntityState.Modified;
+            return Ok(_ThuVienBUS.Delete(id));
+        }
 
-//            try
-//            {
-//                await _context.SaveChangesAsync();
-//            }
-//            catch (DbUpdateConcurrencyException)
-//            {
-//                if (!ThuVienExists(id))
-//                {
-//                    return NotFound();
-//                }
-//                else
-//                {
-//                    throw;
-//                }
-//            }
 
-//            return NoContent();
-//        }
-
-//        // PUT: api/ThuViens/5
-
-//        [HttpPut]
-//        [Route("/suathuvien")]
-//        public async Task<IActionResult> SuaThuVien(int id, [FromBody] ThuVien thuVien)
-//        {
-//            if (id != thuVien.Id)
-//            {
-//                return BadRequest();
-//            }
-
-//            _context.Entry(thuVien).State = EntityState.Modified;
-
-//            try
-//            {
-//                await _context.SaveChangesAsync();
-//            }
-//            catch (DbUpdateConcurrencyException)
-//            {
-//                if (!ThuVienExists(id))
-//                {
-//                    return NotFound();
-//                }
-//                else
-//                {
-//                    throw;
-//                }
-//            }
-
-//            return NoContent();
-//        }
-
-//        // POST: api/ThuViens
-//        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-//        [HttpPost]
-//        public async Task<ActionResult<ThuVien>> ThemThuVien([FromBody] ThuVien thuVien)
-//        {
-//            _context.ThuVien.Add(thuVien);
-//            await _context.SaveChangesAsync();
-
-//            return CreatedAtAction("GetThuVien", new { id = thuVien.Id }, thuVien);
-//        }
-
-//        // DELETE: api/ThuViens/5
-//        [HttpDelete("{id}")]
-//        public async Task<IActionResult> XoaThuVien(int id)
-//        {
-//            var thuVien = await _context.ThuVien.FindAsync(id);
-//            if (thuVien == null)
-//            {
-//                return NotFound();
-//            }
-
-//            _context.ThuVien.Remove(thuVien);
-//            await _context.SaveChangesAsync();
-
-//            return NoContent();
-//        }
-
-//        private bool ThuVienExists(int id)
-//        {
-//            return _context.ThuVien.Any(e => e.Id == id);
-//        }
-//    }
-//}
+    }
+}

@@ -1,108 +1,62 @@
-﻿//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Threading.Tasks;
-//using Microsoft.AspNetCore.Http;
-//using Microsoft.AspNetCore.Mvc;
-//using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
-//using ELibrary.Model;
+using E_Library.Model;
+using E_Library.BUS.IBUS;
 
-//namespace ELibrary.Controllers
-//{
-//    [Route("[controller]/[action]")]
-//    [ApiController]
-//    public class PhanQuyensController : ControllerBase
-//    {
-//        private readonly ELibraryDbContext _context;
+namespace ELibrary.Controllers
+{
+    [Route("[controller]/[action]")]
+    [ApiController]
+    public class PhanQuyensController : ControllerBase
+    {
+        private readonly IPhanQuyenBUS _PhanQuyenBUS;
 
-//        public PhanQuyensController(ELibraryDbContext context)
-//        {
-//            _context = context;
-//        }
+        public PhanQuyensController(IPhanQuyenBUS PhanQuyenBUS)
+        {
+            _PhanQuyenBUS = PhanQuyenBUS;
+        }
+        [HttpGet]
+        public ActionResult GetPhanQuyen()
+        {
+            return Ok(_PhanQuyenBUS.GetAll());
+        }
 
-//        // GET: api/PhanQuyens
-//        [HttpGet]
-//        public async Task<ActionResult<IEnumerable<PhanQuyen>>> PhanQuyen()
-//        {
-//            return await _context.PhanQuyen.ToListAsync();
-//        }
 
-//        // GET: api/PhanQuyens/5
-//        [HttpGet("{id}")]
-//        public async Task<ActionResult<PhanQuyen>> PhanQuyen(int id)
-//        {
-//            var phanQuyen = await _context.PhanQuyen.FindAsync(id);
+        [HttpGet("{id}")]
+        public ActionResult<PhanQuyen> GetPhanQuyen_id(int id)
+        {
+            return _PhanQuyenBUS.Detail(id);
+        }
 
-//            if (phanQuyen == null)
-//            {
-//                return NotFound();
-//            }
+        [HttpPut]
+        public IActionResult SuaPhanQuyen([FromBody] PhanQuyen PhanQuyen)
+        {
+            return Ok(_PhanQuyenBUS.Update(PhanQuyen));
+        }
 
-//            return phanQuyen;
-//        }
+        // POST: api/PhanQuyens
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost]
+        [Route("/ThemPhanQuyen")]
+        public IActionResult ThemPhanQuyen([FromBody] PhanQuyen PhanQuyen)
+        {
+            return Ok(_PhanQuyenBUS.Add(PhanQuyen));
+        }
 
-//        // PUT: api/PhanQuyens/5
-//        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-//        [HttpPut("{id}")]
-//        public async Task<IActionResult> SuaPhanQuyen(int id, [FromBody] PhanQuyen phanQuyen)
-//        {
-//            if (id != phanQuyen.Id)
-//            {
-//                return BadRequest();
-//            }
+        // DELETE: api/PhanQuyens/5
+        [HttpDelete("{id}")]
+        public IActionResult DeletePhanQuyen(int id)
+        {
 
-//            _context.Entry(phanQuyen).State = EntityState.Modified;
+            return Ok(_PhanQuyenBUS.Delete(id));
+        }
 
-//            try
-//            {
-//                await _context.SaveChangesAsync();
-//            }
-//            catch (DbUpdateConcurrencyException)
-//            {
-//                if (!PhanQuyenExists(id))
-//                {
-//                    return NotFound();
-//                }
-//                else
-//                {
-//                    throw;
-//                }
-//            }
 
-//            return NoContent();
-//        }
-
-//        // POST: api/PhanQuyens
-//        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-//        [HttpPost]
-//        public async Task<ActionResult<PhanQuyen>> ThemPhanQuyen([FromBody] PhanQuyen phanQuyen)
-//        {
-//            _context.PhanQuyen.Add(phanQuyen);
-//            await _context.SaveChangesAsync();
-
-//            return CreatedAtAction("GetPhanQuyen", new { id = phanQuyen.Id }, phanQuyen);
-//        }
-
-//        // DELETE: api/PhanQuyens/5
-//        [HttpDelete("{id}")]
-//        public async Task<IActionResult> XoaPhanQuyen(int id)
-//        {
-//            var phanQuyen = await _context.PhanQuyen.FindAsync(id);
-//            if (phanQuyen == null)
-//            {
-//                return NotFound();
-//            }
-
-//            _context.PhanQuyen.Remove(phanQuyen);
-//            await _context.SaveChangesAsync();
-
-//            return NoContent();
-//        }
-
-//        private bool PhanQuyenExists(int id)
-//        {
-//            return _context.PhanQuyen.Any(e => e.Id == id);
-//        }
-//    }
-//}
+    }
+}

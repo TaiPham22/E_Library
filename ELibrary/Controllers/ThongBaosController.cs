@@ -1,109 +1,72 @@
-﻿//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Threading.Tasks;
-//using Microsoft.AspNetCore.Http;
-//using Microsoft.AspNetCore.Mvc;
-//using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
-//using ELibrary.Model;
+using E_Library.Model;
+using E_Library.BUS.IBUS;
 
-//namespace ELibrary.Controllers
-//{
-//    [Route("[controller]/[action]")]
-//    [ApiController]
-//    public class ThongBaosController : ControllerBase
-//    {
-//        private readonly ELibraryDbContext _context;
+namespace ELibrary.Controllers
+{
+    [Route("[controller]/[action]")]
+    [ApiController]
+    public class ThongBaosController : ControllerBase
+    {
+        private readonly IThongBaoBUS _ThongBaoBUS;
 
-//        public ThongBaosController(ELibraryDbContext context)
-//        {
-//            _context = context;
-//        }
+        public ThongBaosController(IThongBaoBUS ThongBaoBUS)
+        {
+            _ThongBaoBUS = ThongBaoBUS;
+        }
+        [HttpGet]
+        public ActionResult GetThongBao(bool phanloai)
+        {
+            return Ok(_ThongBaoBUS.GetAll(phanloai));
+        }
+        [HttpGet]
+        public ActionResult LocThongBao(bool phanloai)
+        {
+            return Ok(_ThongBaoBUS.OrderBy(phanloai));
+        }
+        [HttpGet]
+        public ActionResult TimThongBao(string tukhoa,bool phanloai)
+        {
+            return Ok(_ThongBaoBUS.GetAlias(tukhoa,phanloai));
+        }
 
-//        // GET: api/ThongBaos
-//        [HttpGet]
-//        public async Task<ActionResult<IEnumerable<ThongBao>>> DsThongBao()
-//        {
-//            return await _context.ThongBao.ToListAsync();
-//        }
 
-//        [HttpGet]
-//        [Route("/LocThongBao")]
-//        public async Task<ActionResult<IEnumerable<ThongBao>>> LocThongBao(int ?loai)
-//        {
-//            var result = await _context.ThongBao.ToListAsync();
-//            if(loai==0)
-//            {
-//                result = result.Where(t => t.LoaiThongBao == true).ToList();
-//            }else 
-//                if(loai==1)
-//            {
-//                result = result.Where(t => t.LoaiThongBao == false).ToList();
-//            }
-            
-//            return result;
-//        }
+        [HttpGet("{id}")]
+        public ActionResult<ThongBao> GetThongBao_id(int id)
+        {
+            return _ThongBaoBUS.Detail(id);
+        }
 
-//        [HttpGet]
-//        [Route("/TimThongBao")]
-//        public async Task<ActionResult<IEnumerable<ThongBao>>> TimThongBao(string tukhoa)
-//        {
-//            var result = (from tb in _context.ThongBao
-//                          where tb.ChuDe.Contains(tukhoa) || tb.NoiDung.Contains(tukhoa)
-//                          select new
-//                          { }
-//                          ).ToList();
+        [HttpPut]
+        public IActionResult SuaThongBao([FromBody] ThongBao ThongBao)
+        {
+            return Ok(_ThongBaoBUS.Update(ThongBao));
+        }
 
-//            return Ok(result);
-//        }
-//        // GET: api/ThongBaos/5
-//        [HttpGet("{id}")]
-//        public async Task<ActionResult<ThongBao>> ThongBao(int id)
-//        {
-//            var result = await _context.ThongBao.FindAsync(id);
+        // POST: api/ThongBaos
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost]
+        [Route("/ThemThongBao")]
+        public IActionResult ThemThongBao([FromBody] ThongBao ThongBao)
+        {
+            return Ok(_ThongBaoBUS.Add(ThongBao));
+        }
 
-//            if (result == null)
-//            {
-//                return NotFound();
-//            }
+        // DELETE: api/ThongBaos/5
+        [HttpDelete("{id}")]
+        public IActionResult DeleteThongBao(int id)
+        {
 
-//            return result;
-//        }
+            return Ok(_ThongBaoBUS.Delete(id));
+        }
 
-        
 
-//        // POST: api/ThongBaos
-//        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-//        [HttpPost]
-//        public async Task<ActionResult<ThongBao>> ThemThongBao([FromBody] ThongBao thongBao)
-//        {
-//            thongBao.ThoiGian = DateTime.Now;
-//            _context.ThongBao.Add(thongBao);
-//            await _context.SaveChangesAsync();
-
-//            return Ok("Them thanh cong");
-//        }
-
-//        // DELETE: api/ThongBaos/5
-//        [HttpDelete("{id}")]
-//        public async Task<IActionResult> DeleteThongBao(int id)
-//        {
-//            var thongBao = await _context.ThongBao.FindAsync(id);
-//            if (thongBao == null)
-//            {
-//                return NotFound();
-//            }
-
-//            _context.ThongBao.Remove(thongBao);
-//            await _context.SaveChangesAsync();
-
-//            return NoContent();
-//        }
-
-//        private bool ThongBaoExists(int id)
-//        {
-//            return _context.ThongBao.Any(e => e.Id == id);
-//        }
-//    }
-//}
+    }
+}

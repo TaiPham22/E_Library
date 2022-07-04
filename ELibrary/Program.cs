@@ -22,6 +22,16 @@ builder.Services.AddTransient<IChuDeBUS, ChuDeBUS>();
 //TroGiup
 builder.Services.AddTransient<ITroGiup, TroGiupRepository>();
 builder.Services.AddTransient<ITroGiupBUS, TroGiupBUS>();
+//TepRieng
+builder.Services.AddTransient<ITepRieng, TepRiengRepository>();
+builder.Services.AddTransient<ITepRiengBUS, TepRiengBUS>();
+//ThongBao
+builder.Services.AddTransient<IThongBao, ThongBaoRepository>();
+builder.Services.AddTransient<IThongBaoBUS, ThongBaoBUS>();
+
+//ThongBao
+builder.Services.AddTransient<IThongBao, ThongBaoRepository>();
+builder.Services.AddTransient<IThongBaoBUS, ThongBaoBUS>();
 //DeThi
 builder.Services.AddTransient<IDeThi, DeThiRepository>();
 builder.Services.AddTransient<IDeThiBUS, DeThiBUS>();
@@ -29,6 +39,18 @@ builder.Services.AddTransient<IDeThiBUS, DeThiBUS>();
 
 builder.Services.AddTransient<ITaiKhoan, TaiKhoanRepository>();
 builder.Services.AddTransient<ITaiKhoanBUS, TaiKhoanBUS>();
+//VaiTro
+builder.Services.AddTransient<IVaiTro, VaiTroRepository>();
+builder.Services.AddTransient<IVaiTroBUS, VaiTroBUS>();
+//PhanQuyen
+builder.Services.AddTransient<IPhanQuyen, PhanQuyenRepository>();
+builder.Services.AddTransient<IPhanQuyenBUS, PhanQuyenBUS>();
+//MonHoc
+builder.Services.AddTransient<IMonHoc, MonHocRepository>();
+builder.Services.AddTransient<IMonHocBUS, MonHocBUS>();
+//LopHoc
+builder.Services.AddTransient<ILopHoc, LopHocRepository>();
+builder.Services.AddTransient<ILopHocBUS, LopHocBUS>();
 
 // Add services to the container.
 builder.Services.AddCors(options =>

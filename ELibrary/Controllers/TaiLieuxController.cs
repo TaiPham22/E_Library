@@ -1,203 +1,109 @@
-﻿//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Threading.Tasks;
-//using Microsoft.AspNetCore.Hosting;
-//using Microsoft.AspNetCore.Http;
-//using Microsoft.AspNetCore.Mvc;
-//using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
-//using ELibrary.Model;
+using E_Library.Model;
+using E_Library.BUS.IBUS;
 
-//namespace ELibrary.Controllers
-//{
-//    [Route("[controller]/[action]")]
-//    [ApiController]
-//    public class TaiLieuxController : ControllerBase
-//    {
-//        private readonly ELibraryDbContext _context;
-//        private readonly IWebHostEnvironment _webHostEnvironment;
 
-//        public TaiLieuxController(ELibraryDbContext context, IWebHostEnvironment webHostEnvironment)
-//        {
-//            _context = context;
-//            _webHostEnvironment = webHostEnvironment;
-//        }
+namespace ELibrary.Controllers
+{
+    [Route("[controller]/[action]")]
+    [ApiController]
+    public class TaiLieuxController : ControllerBase
+    {
+        private readonly E_LibraryDbContext _context;
+        private readonly ITaiLieuBUS _TaiLieuBUS;
 
-//        // GET: api/TaiLieux
-//        [HttpGet]
-//        public async Task<ActionResult<IEnumerable<TaiLieu>>> TaiLieu()
-//        {
-//            return await _context.TaiLieu.ToListAsync();
-//        }
 
-//        // GET: api/TaiLieux/5
-//        [HttpGet("{id}")]
-//        public async Task<ActionResult<TaiLieu>> TaiLieu(int id)
-//        {
-//            var taiLieu = await _context.TaiLieu.FindAsync(id);
+        public TaiLieuxController(E_LibraryDbContext context, ITaiLieuBUS taiLieu)
+        {
+            _context = context;
+            _TaiLieuBUS = taiLieu;
+        }
 
-//            if (taiLieu == null)
-//            {
-//                return NotFound();
-//            }
+        // GET: api/TaiLieux
+        [HttpGet]
+        public ActionResult TaiLieu()
+        {
+            return Ok(_TaiLieuBUS.GetAll());
+        }
 
-//            return taiLieu;
-//        }
-       
-//        //
-//        [HttpGet]
-//        [Route("/TimKiemTaiLieu")]
+        // GET: api/TaiLieux/5
+        [HttpGet("{id}")]
+        public ActionResult<TaiLieu> TaiLieu(int id)
+        {
+            return Ok(_TaiLieuBUS.Detail(id));
+        }
 
-//        public async Task<ActionResult> TimKiemTaiLieu(string tukhoa)
-//        {
-//            var result = (from a in _context.TaiLieu
-//                          join b in _context.LopHocTaiLieu on a.Id equals b.TaiLieuId
-//                          join c in _context.LopHoc on b.LopHocId equals c.Id
-//                          join d in _context.MonHoc on a.MonHocId equals d.Id
-//                          where a.TieuDe.Contains(tukhoa) || c.TenLop.Contains(tukhoa) || d.TenMonHoc.Contains(tukhoa)
-//                          select new
-//                          {
+        //
+        [HttpGet]
+        [Route("/TimKiemTaiLieu")]
 
-//                              TenTaiLieu = a.TenTaiLieu,
-//                              PhanLoai = a.LoaiTaiLieu,
-//                              NgayGuiPheDuyet = a.NgayGuiPheDuyet,
-//                              TinhTrangPheDuyet = a.TinhTrang,
-//                              GhiChu = a.GhiChu
-//                          }).ToList();
-//            return Ok(result);
-//        }
-       
-//        //
-//        //
-//        [HttpGet]
-//        [Route("/LocTaiLieu")]
-//        public async Task<ActionResult<IEnumerable<TaiLieu>>> LocTaiLieu(int? tt, string gv, int mh)
-//        {
-//            var result = await _context.TaiLieu.ToListAsync();
-//            if (gv != null && mh != 0)
-//            {
-//                result = await _context.TaiLieu.Where(t => t.TaiKhoanId == gv && t.MonHocId == mh).ToListAsync();
-//            }
-//            else
-//            if (mh != 0)
-//            {
-//                result = await _context.TaiLieu.Where(t => t.MonHocId == mh).ToListAsync();
-//            }
-//            else
-//            if (gv != null)
-//            {
-//                result = await _context.TaiLieu.Where(t => t.TaiKhoanId == gv).ToListAsync();
-//            }
+        public async Task<ActionResult> TimKiemTaiLieu(string tukhoa)
+        {
+            
+            return Ok(_TaiLieuBUS.GetAlias(tukhoa));
+        }
 
-//            if (tt != null)
-//            {
-//                result = result.Where(t => t.TinhTrang == (tt != 0) ? true : false).ToList();
-//            }
+        //
+        //
+        [HttpGet]
+        [Route("/LocTaiLieu")]
+        public async Task<ActionResult<IEnumerable<TaiLieu>>> LocTaiLieu(int tth)
+        {
+            return Ok(_TaiLieuBUS.OrderBy(tth));
+        }
 
-//            return result;
-//        }
-       
 
-//        [HttpGet]
-//        [Route("/PheDuyetTaiLieu")]
-//        public async Task<ActionResult> DuyetTaiLieu(int TaiLieuId)
-//        {
-//            var taiLieu = await _context.TaiLieu.FindAsync(TaiLieuId);
-                
-//            if (taiLieu == null)
-//            {
-//                return NotFound();
-//            }
-//            taiLieu.TinhTrang = true;
-//            _context.Update(taiLieu);
-//           await _context.SaveChangesAsync();
+        [HttpGet]
+        [Route("/PheDuyetTaiLieu")]
+        public async Task<ActionResult> DuyetTaiLieu(int TaiLieuId, bool tinhtrang)
+        {
+            return Ok(_TaiLieuBUS.PheDuyet(TaiLieuId,tinhtrang)) ;
+        }
 
-//            return NoContent();
-//        }
+        // PUT: api/TaiLieux/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("{id}")]
+        public async Task<IActionResult> SuaTaiLieu( [FromBody] TaiLieu taiLieu)
+        {
 
-//        // PUT: api/TaiLieux/5
-//        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-//        [HttpPut("{id}")]
-//        public async Task<IActionResult> SuaTaiLieu(int id,[FromBody] TaiLieu taiLieu)
-//        {
-//            if (id != taiLieu.Id)
-//            {
-//                return BadRequest();
-//            }
+            return Ok(_TaiLieuBUS.Update(taiLieu)) ;
+        }
+        //Phan cong
+        [HttpPost]
+        [Route("/PhanCongTaiLieu")]
 
-//            _context.Entry(taiLieu).State = EntityState.Modified;
+        public async Task<ActionResult> PhanCongTaiLieu(int lopHoc, int tailieu)
+        {
+            
+            return Ok(_TaiLieuBUS.AddLopHoc(tailieu,lopHoc));
+        }
 
-//            try
-//            {
-//                await _context.SaveChangesAsync();
-//            }
-//            catch (DbUpdateConcurrencyException)
-//            {
-//                if (!TaiLieuExists(id))
-//                {
-//                    return NotFound();
-//                }
-//                else
-//                {
-//                    throw;
-//                }
-//            }
+        //them tai lieu vao monhoc
+        [HttpPost]
+        [Route("/ThemTaiLieuVaoMonHoc")]
+        public async Task<ActionResult> ThemVaoMonHoc(int taiLieu,int monHoc)
+        {
+            return Ok(_TaiLieuBUS.AddMonHoc(taiLieu,monHoc));
+        }
 
-//            return NoContent();
-//        }
-//        //Phan cong
-//        [HttpPost]
-//        [Route("/PhanCongTaiLieu")]
+        // DELETE: api/TaiLieux/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> XoaTaiLieu(int id)
+        {
+            return Ok(_TaiLieuBUS.Delete(id));
+        }
 
-//        public async Task<ActionResult> PhanCongTaiLieu(int lh,int tl)
-//        {
-//            LopHocTaiLieu lhtl = new LopHocTaiLieu();
-//            lhtl.LopHocId = lh;
-//            lhtl.TaiLieuId = tl;
-//            _context.LopHocTaiLieu.Add(lhtl);
-//           await _context.SaveChangesAsync();
-//            return Ok("Da them vao lop hoc");
-//        }
-        
-//        //them tai lieu vao monhoc
-//        [HttpPost]
-//        [Route("/ThemTaiLieuVaoMonHoc")]
-//        public async Task<ActionResult> ThemVaoMonHoc(int taiLieu,string tieuDe,int monHoc, int lopHoc)
-//        {
-//            var tlieu = await _context.TaiLieu.FindAsync(taiLieu);
-//            TaiLieu tl = new TaiLieu {
-//                MonHocId = monHoc,
-//                TaiKhoanId = tlieu.TaiKhoanId,
-//                TinhTrang = true,
-//                NgayGuiPheDuyet = tlieu.NgayGuiPheDuyet,
-//                LoaiTaiLieu = tlieu.LoaiTaiLieu,
-//                NguoiChinhSuaCuoi = tlieu.NguoiChinhSuaCuoi,
-//                TieuDe = tieuDe,
-//                };
-           
-//            return Ok(tl);
-//        }
-
-//        // DELETE: api/TaiLieux/5
-//        [HttpDelete("{id}")]
-//        public async Task<IActionResult> XoaTaiLieu(int id)
-//        {
-//            var taiLieu = await _context.TaiLieu.FindAsync(id);
-//            if (taiLieu == null)
-//            {
-//                return NotFound();
-//            }
-
-//            _context.TaiLieu.Remove(taiLieu);
-//            await _context.SaveChangesAsync();
-
-//            return NoContent();
-//        }
-
-//        private bool TaiLieuExists(int id)
-//        {
-//            return _context.TaiLieu.Any(e => e.Id == id);
-//        }
-//    }
-//}
+        private bool TaiLieuExists(int id)
+        {
+            return _context.TaiLieu.Any(e => e.Id == id);
+        }
+    }
+}

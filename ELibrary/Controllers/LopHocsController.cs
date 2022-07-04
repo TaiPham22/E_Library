@@ -1,108 +1,64 @@
-﻿//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Threading.Tasks;
-//using Microsoft.AspNetCore.Http;
-//using Microsoft.AspNetCore.Mvc;
-//using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
-//using ELibrary.Model;
+using E_Library.Model;
+using E_Library.BUS.IBUS;
 
-//namespace ELibrary.Controllers
-//{
-//    [Route("[controller]/[action]")]
-//    [ApiController]
-//    public class LopHocsController : ControllerBase
-//    {
-//        private readonly ELibraryDbContext _context;
+namespace ELibrary.Controllers
+{
+    [Route("[controller]/[action]")]
+    [ApiController]
+    public class LopHocsController : ControllerBase
+    {
+        private readonly ILopHocBUS _LopHocBUS;
 
-//        public LopHocsController(ELibraryDbContext context)
-//        {
-//            _context = context;
-//        }
+        public LopHocsController(ILopHocBUS LopHocBUS)
+        {
+            _LopHocBUS = LopHocBUS;
+        }
+        [HttpGet]
+        public ActionResult GetLopHoc()
+        {
+            return Ok(_LopHocBUS.GetAll());
+        }
+        [HttpGet("{id}")]
+        public ActionResult<LopHoc> GetLopHoc_id(int id)
+        {
+            return _LopHocBUS.Detail(id);
+        }
+        [HttpGet]
+        public ActionResult GetAlias(string tukhoa)
+        {
+            return Ok(_LopHocBUS.GetAlias(tukhoa));
+        }
+        [HttpPut]
+        public IActionResult SuaLopHoc([FromBody] LopHoc LopHoc)
+        {
+            return Ok(_LopHocBUS.Update(LopHoc));
+        }
 
-//        // GET: api/LopHocs
-//        [HttpGet]
-//        public async Task<ActionResult<IEnumerable<LopHoc>>> LopHoc()
-//        {
-//            return await _context.LopHoc.ToListAsync();
-//        }
+        // POST: api/LopHocs
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost]
+        [Route("/ThemLopHoc")]
+        public IActionResult ThemLopHoc([FromBody] LopHoc LopHoc)
+        {
+            return Ok(_LopHocBUS.Add(LopHoc));
+        }
 
-//        // GET: api/LopHocs/5
-//        [HttpGet("{id}")]
-//        public async Task<ActionResult<LopHoc>> LopHoc(int id)
-//        {
-//            var lopHoc = await _context.LopHoc.FindAsync(id);
+        // DELETE: api/LopHocs/5
+        [HttpDelete("{id}")]
+        public IActionResult DeleteLopHoc(int id)
+        {
 
-//            if (lopHoc == null)
-//            {
-//                return NotFound();
-//            }
+            return Ok(_LopHocBUS.Delete(id));
+        }
 
-//            return lopHoc;
-//        }
 
-//        // PUT: api/LopHocs/5
-//        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-//        [HttpPut("{id}")]
-//        public async Task<IActionResult> SuaLopHoc(int id,[FromBody] LopHoc lopHoc)
-//        {
-//            if (id != lopHoc.Id)
-//            {
-//                return BadRequest();
-//            }
-
-//            _context.Entry(lopHoc).State = EntityState.Modified;
-
-//            try
-//            {
-//                await _context.SaveChangesAsync();
-//            }
-//            catch (DbUpdateConcurrencyException)
-//            {
-//                if (!LopHocExists(id))
-//                {
-//                    return NotFound();
-//                }
-//                else
-//                {
-//                    throw;
-//                }
-//            }
-
-//            return NoContent();
-//        }
-
-//        // POST: api/LopHocs
-//        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-//        [HttpPost]
-//        public async Task<ActionResult<LopHoc>> ThemLopHoc([FromBody] LopHoc lopHoc)
-//        {
-//            _context.LopHoc.Add(lopHoc);
-//            await _context.SaveChangesAsync();
-
-//            return CreatedAtAction("GetLopHoc", new { id = lopHoc.Id }, lopHoc);
-//        }
-
-//        // DELETE: api/LopHocs/5
-//        [HttpDelete("{id}")]
-//        public async Task<IActionResult> XoaLopHoc(int id)
-//        {
-//            var lopHoc = await _context.LopHoc.FindAsync(id);
-//            if (lopHoc == null)
-//            {
-//                return NotFound();
-//            }
-
-//            _context.LopHoc.Remove(lopHoc);
-//            await _context.SaveChangesAsync();
-
-//            return NoContent();
-//        }
-
-//        private bool LopHocExists(int id)
-//        {
-//            return _context.LopHoc.Any(e => e.Id == id);
-//        }
-//    }
-//}
+    }
+}
